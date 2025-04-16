@@ -1,3 +1,13 @@
+import {
+    FormControl,
+    FormControlHelper,
+    FormControlHelperText,
+    FormControlError,
+    FormControlLabel,
+    FormControlLabelText,
+} from "@/components/ui/form-control";
+import { Textarea, TextareaInput } from "@/components/ui/textarea";
+
 import React from "react";
 import {
     Button,
@@ -5,7 +15,6 @@ import {
     ButtonSpinner,
     ButtonIcon,
 } from "@/components/ui/button";
-
 import { Image, StyleSheet, Platform } from "react-native";
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -36,6 +45,16 @@ export default function HomeScreen() {
                     >
                         <ButtonText>Hello World</ButtonText>
                     </Button>
+                </>
+                <>
+                    <Textarea
+                        size={"lg"}
+                        isInvalid={false}
+                        isDisabled={false}
+                        className="w-64"
+                    >
+                        <TextareaInput placeholder="Your text goes here..." />
+                    </Textarea>
                 </>
                 <HelloWave />
             </ThemedView>
