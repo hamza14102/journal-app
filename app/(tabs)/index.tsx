@@ -1,122 +1,124 @@
-import {
-    FormControl,
-    FormControlHelper,
-    FormControlHelperText,
-    FormControlError,
-    FormControlLabel,
-    FormControlLabelText,
-} from "@/components/ui/form-control";
-import { Textarea, TextareaInput } from "@/components/ui/textarea";
-
-import React from "react";
-import {
-    Button,
-    ButtonText,
-    ButtonSpinner,
-    ButtonIcon,
-} from "@/components/ui/button";
-import { Image, StyleSheet, Platform } from "react-native";
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import React, { useState } from "react";
+import { StyleSheet, FlatList, View, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { JournalEntry, JournalEntryProps } from "@/components/JournalEntry";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+
+// Sample journal entries for demonstration
+const sampleEntries: JournalEntryProps[] = [
+    {
+        id: "1",
+        date: "April 24, 2024",
+        content:
+            "I'm so thankful for this day... It was full of wonderful surprises and moments of joy.",
+        mood: "good",
+    },
+    {
+        id: "2",
+        date: "April 23, 2024",
+        content: "Met an old friend for lunch today.",
+        mood: "moderate",
+    },
+    {
+        id: "3",
+        date: "April 21, 2024",
+        content: "Busy day at work.",
+        mood: "sad",
+    },
+    {
+        id: "4",
+        date: "April 20, 2024",
+        content:
+            "Feeling overwhelmed with all the tasks I need to complete this week.",
+        mood: "bad",
+    },
+];
+
 export default function HomeScreen() {
+    const [entries] = useState<JournalEntryProps[]>(sampleEntries);
+    const colorScheme = useColorScheme();
+    const insets = useSafeAreaInsets();
+    const router = useRouter();
+
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{
-                light: "#A1CEDC",
-                dark: "#1D3D47",
-            }}
-            headerImage={
-                <Image
-                    source={require("@/assets/images/partial-react-logo.png")}
-                    style={styles.reactLogo}
+        <ThemedView style={styles.container}>
+            <View style={[styles.header, { paddingTop: insets.top || 44 }]}>
+                <ThemedText type="title">Journal</ThemedText>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => router.push("/new-entry")}
+                >
+                    <IconSymbol name="plus" size={24} color="#fff" />
+                </TouchableOpacity>
+            </View>
+
+            {entries.length === 0 ? (
+                <View style={styles.emptyContainer}>
+                    <ThemedText style={styles.emptyText}>
+                        No journal entries yet. Tap the + button to create your
+                        first entry.
+                    </ThemedText>
+                </View>
+            ) : (
+                <FlatList
+                    data={entries}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <JournalEntry
+                            id={item.id}
+                            date={item.date}
+                            content={item.content}
+                            mood={item.mood}
+                        />
+                    )}
+                    contentContainerStyle={styles.listContainer}
                 />
-            }
-        >
-            <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title">Welcome!</ThemedText>
-                <>
-                    <Button
-                        action={"primary"}
-                        variant={"solid"}
-                        size={"lg"}
-                        isDisabled={false}
-                    >
-                        <ButtonText>Hello World</ButtonText>
-                    </Button>
-                </>
-                <>
-                    <Textarea
-                        size={"lg"}
-                        isInvalid={false}
-                        isDisabled={false}
-                        className="w-64"
-                    >
-                        <TextareaInput placeholder="Your text goes here..." />
-                    </Textarea>
-                </>
-                <HelloWave />
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-                <ThemedText>
-                    Edit{" "}
-                    <ThemedText type="defaultSemiBold">
-                        app/(tabs)/index.tsx
-                    </ThemedText>{" "}
-                    to see changes. Press{" "}
-                    <ThemedText type="defaultSemiBold">
-                        {Platform.select({
-                            ios: "cmd + d",
-                            android: "cmd + m",
-                            web: "F12",
-                        })}
-                    </ThemedText>{" "}
-                    to open developer tools.
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-                <ThemedText>
-                    Tap the Explore tab to learn more about what's included in
-                    this starter app.
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">
-                    Step 3: Get a fresh start
-                </ThemedText>
-                <ThemedText>
-                    When you're ready, run{" "}
-                    <ThemedText type="defaultSemiBold">
-                        npm run reset-project
-                    </ThemedText>{" "}
-                    to get a fresh{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-                    directory. This will move the current{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-                    <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-                </ThemedText>
-            </ThemedView>
-        </ParallaxScrollView>
+            )}
+        </ThemedView>
     );
 }
+
 const styles = StyleSheet.create({
-    titleContainer: {
+    container: {
+        flex: 1,
+    },
+    header: {
+        paddingHorizontal: 20,
+        paddingBottom: 16,
         flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        gap: 8,
     },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
+    addButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: "#0a7ea4",
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
     },
-    reactLogo: {
-        height: 178,
-        width: 290,
-        bottom: 0,
-        left: 0,
-        position: "absolute",
+    listContainer: {
+        padding: 20,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    emptyText: {
+        textAlign: "center",
+        fontSize: 16,
+        lineHeight: 24,
     },
 });

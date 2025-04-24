@@ -34,18 +34,26 @@ export default function RootLayout() {
     }
 
     return (
-        <GluestackUIProvider mode="light">
+        <GluestackUIProvider mode={colorScheme === "dark" ? "dark" : "light"}>
             <ThemeProvider
                 value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
                 <Stack>
                     <Stack.Screen
                         name="(tabs)"
+                        options={{ headerShown: false, title: "Journal App" }}
+                    />
+                    <Stack.Screen
+                        name="new-entry"
+                        options={{ headerShown: false, presentation: "modal" }}
+                    />
+                    <Stack.Screen
+                        name="entry/[id]"
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen name="+not-found" />
                 </Stack>
-                <StatusBar style="auto" />
+                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
             </ThemeProvider>
         </GluestackUIProvider>
     );
